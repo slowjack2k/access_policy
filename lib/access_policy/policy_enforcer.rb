@@ -8,7 +8,7 @@ module AccessPolicy
     attr_accessor :current_user_or_role, :object_or_class, :query, :default_error_policy
 
     def initialize(current_user_or_role, object_or_class, query=nil, default_error_policy=->(*) { raise })
-      raise NotDefinedError, 'unable to find policy class for anonymous classes' if class_to_guard(current_user_or_role).name.nil? || class_to_guard(current_user_or_role).name.length < 1
+      raise NotDefinedError, 'unable to find policy class for anonymous classes' if class_to_guard(object_or_class).name.nil? || class_to_guard(object_or_class).name.length < 1
 
       self.current_user_or_role = current_user_or_role
       self.object_or_class = object_or_class

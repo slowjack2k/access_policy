@@ -46,6 +46,12 @@ module AccessPolicy
       ->(*) { raise }
     }
 
+    describe '#new' do
+      it 'raises an error when class to guard has no name' do
+        expect{AccessPolicy::PolicyEnforcer.new(current_user, Class.new.new, action, error_policy)}.to raise_error
+      end
+    end
+
 
     describe '.policy' do
 
