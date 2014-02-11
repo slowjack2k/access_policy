@@ -76,6 +76,6 @@ end
 
 RSpec.configure do |config|
   config.include AccessPolicy::RspecMatchers, type: :policy, example_group: ->(example_group, metadata){
-    metadata[:type].nil? && /spec\/policies/ =~ example_group[:file_path]
+    metadata[:type].nil? && %r{spec/policies} =~ example_group[:file_path]
   }
 end
