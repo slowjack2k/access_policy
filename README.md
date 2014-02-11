@@ -91,6 +91,21 @@ Or
    end
  end
 
+ object_to_guard.with_user_or_role(current_user) do
+    begin
+      object_to_guard.method_to_guard
+
+      object_to_guard.with_user_or_role(current_user.as_root) do
+        object_to_guard.method_to_guard_for_root
+      end
+
+    rescue PolicyEnforcer::NotAuthorizedError
+     ...
+    rescue PolicyEnforcer::NotDefinedError
+     ...
+    end
+  end
+
 
 ```
 
