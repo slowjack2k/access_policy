@@ -1,4 +1,4 @@
-# AccessPolicy
+# AccessPolicy [![Code Climate](https://codeclimate.com/github/slowjack2k/access_policy.png)](https://codeclimate.com/github/slowjack2k/access_policy) [![Build Status](https://travis-ci.org/slowjack2k/access_policy.png?branch=master)](https://travis-ci.org/slowjack2k/access_policy) [![Coverage Status](https://coveralls.io/repos/slowjack2k/access_policy/badge.png?branch=master)](https://coveralls.io/r/slowjack2k/access_policy?branch=master) [![Gem Version](https://badge.fury.io/rb/access_policy.png)](http://badge.fury.io/rb/access_policy)
 
 Object oriented authorization for ruby. It provides helper to
 protect method call's via Policy-Classes.
