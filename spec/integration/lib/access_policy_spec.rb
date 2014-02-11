@@ -40,7 +40,9 @@ describe AccessPolicy do
 
     it 'protects created methods' do
       expect {
-        subject.call
+        subject.with_user_or_role(falsy_user) do
+          subject.call
+        end
       }.to  raise_error AccessPolicy::PolicyEnforcer::NotAuthorizedError
     end
 

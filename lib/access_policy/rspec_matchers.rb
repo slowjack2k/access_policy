@@ -2,75 +2,103 @@ module AccessPolicy
   module RspecMatchers
     extend ::RSpec::Matchers::DSL
 
+
     def self.included(base)
       base.metadata[:type] = :policy
     end
 
-    module Common
-      def self.call(base)
-        base.instance_eval do
-          chain :to do |user|
-            @user = user
-          end
+    class PositivePolicyMatcher
+      attr_accessor :policy_class, :user, :object_to_guard, :permission
 
-          chain :on do |object_to_guard|
-            @object_to_guard = object_to_guard
-          end
+      def initialize(permission)
+        self.permission = permission
+      end
 
-          define_method :permission_granted? do |policy_class, permission |
-            policy = policy_class.new(@user, @object_to_guard)
-            policy.public_send("#{permission}?")
-          end
+      def matches?(policy_class)
+        self.policy_class = policy_class
+        eval_match
+      end
 
-          define_method :permission_denied? do |*args|
-            ! permission_granted?(*args)
-          end
+      def eval_match
+        permission_granted?
+      end
 
-          define_method :object_as_text do
-            @object_to_guard.nil? ? '' : " on #{@object_to_guard.inspect}"
-          end
+      def failure_message
+        "#{policy_class} #{failure_message_part} #{permission} #{object_as_text}#{user_as_text}."
+      end
 
-          define_method :user_as_text do
-            @user.nil? ? '' : " for #{@user.inspect}"
-          end
+      def negative_failure_message
+        "#{policy_class} #{negative_failure_message_part} #{permission}#{object_as_text}#{user_as_text}."
+      end
 
-        end
+
+      def failure_message_part
+        'does not permit'
+      end
+
+      def negative_failure_message_part
+        'does not forbid'
+      end
+
+      def to(user)
+        self.user = user
+        self
+      end
+      alias_method :for, :to
+      alias_method :for_user, :to
+      alias_method :to_user, :to
+
+      def on(object_to_guard)
+        self.object_to_guard = object_to_guard
+        self
+      end
+      alias_method :with, :on
+
+      protected
+
+      def permission_granted?
+        policy = policy_class.new(@user, @object_to_guard)
+        policy.public_send("#{permission}?")
+      end
+
+      def object_as_text
+        self.object_to_guard.nil? ? '' : " on #{self.object_to_guard.inspect}"
+      end
+
+      def  user_as_text
+        self.user.nil? ? '' : " for #{self.inspect}"
       end
 
     end
 
-    matcher :permit do |permission|
-      match do |policy_class|
-        permission_granted?(policy_class, permission)
+    class NegativePolicyMatcher < PositivePolicyMatcher
+      def eval_match
+        permission_denied?
       end
 
-      failure_message_for_should do |policy_class|
-        "#{policy_class} does not permit #{permission} #{object_as_text}#{user_as_text}."
+      def failure_message_part
+        'does not forbid'
       end
 
-      failure_message_for_should_not do |policy_class|
-        "#{policy_class} does not forbid #{permission}#{object_as_text}#{user_as_text}."
+      def negative_failure_message_part
+        'does permit'
       end
 
-      Common.call(self)
+      protected
 
+      def permission_denied?
+        ! permission_granted?
+      end
     end
 
-    matcher :forbid do |permission|
-      match do |policy_class|
-        permission_denied?(policy_class, permission)
-      end
-
-      failure_message_for_should do |policy_class|
-        "#{policy_class} does not forbid #{permission} #{object_as_text}#{user_as_text}."
-      end
-
-      failure_message_for_should_not do |policy_class|
-        "#{policy_class} does not permit #{permission}#{object_as_text}#{user_as_text}."
-      end
-
-      Common.call(self)
+    def permit(expected=nil)
+      PositivePolicyMatcher.new(expected)
     end
+
+    def forbid(expected=nil)
+      NegativePolicyMatcher.new(expected)
+    end
+
   end
 end
 
