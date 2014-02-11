@@ -17,7 +17,7 @@ module MatcherExampleSpec
   end
 end
 
-describe "PolicyMatchers", :policy do
+describe "PolicyMatchers", type: :policy do
   subject(:policy){
     MatcherExampleSpec::DummyPolicy
   }

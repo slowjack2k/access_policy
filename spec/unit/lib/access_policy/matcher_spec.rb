@@ -12,7 +12,7 @@ describe 'PolicyMatchers' do
     end
   end
 
-  context 'policy spec', :policy do
+  context 'policy spec', type: :policy do
     it 'grands access to permit' do
       expect { permit }.not_to raise_error
     end

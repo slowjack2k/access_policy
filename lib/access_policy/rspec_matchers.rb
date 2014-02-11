@@ -2,6 +2,10 @@ module AccessPolicy
   module RspecMatchers
     extend ::RSpec::Matchers::DSL
 
+    def self.included(base)
+      base.metadata[:type] = :policy
+    end
+
     module Common
       def self.call(base)
         base.instance_eval do
@@ -71,5 +75,7 @@ module AccessPolicy
 end
 
 RSpec.configure do |config|
-  config.include AccessPolicy::RspecMatchers, :policy
+  config.include AccessPolicy::RspecMatchers, type: :policy, example_group: ->(example_group, metadata){
+    metadata[:type].nil? && /spec\/policies/ =~ example_group[:file_path]
+  }
 end
