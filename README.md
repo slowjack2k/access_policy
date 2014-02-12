@@ -55,9 +55,9 @@ policy_checker.with_user_or_role(current_user) do
   begin
     policy_checker.authorize(object_to_guard, 'method_to_guard')
     object_to_guard.method_to_guard
-  rescue AccessPolicy::PolicyEnforcer::NotAuthorizedError
+  rescue AccessPolicy::NotAuthorizedError
    ...
-  rescue AccessPolicy::PolicyEnforcer::NotDefinedError
+  rescue AccessPolicy::NotDefinedError
    ...
   end
 end
@@ -91,9 +91,9 @@ Or
  object_to_guard.with_user_or_role(current_user) do
    begin
      object_to_guard.method_to_guard
-   rescue PolicyEnforcer::NotAuthorizedError
+   rescue AccessPolicy::NotAuthorizedError
     ...
-   rescue PolicyEnforcer::NotDefinedError
+   rescue AccessPolicy::NotDefinedError
     ...
    end
  end
@@ -106,9 +106,9 @@ Or
         object_to_guard.method_to_guard_for_root
       end
 
-    rescue PolicyEnforcer::NotAuthorizedError
+    rescue AccessPolicy::NotAuthorizedError
      ...
-    rescue PolicyEnforcer::NotDefinedError
+    rescue AccessPolicy::NotDefinedError
      ...
     end
   end
