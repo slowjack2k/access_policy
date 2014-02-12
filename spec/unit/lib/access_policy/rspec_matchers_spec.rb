@@ -43,6 +43,14 @@ describe 'PolicyMatchers' do
         expect(matcher.matches?(RspecMatchersSpec::DummyPolicy)).to be_truthy
       end
 
+      it 'sets error messages' do
+        matcher = permit(:read).on(record).to(user)
+        matcher.matches?(RspecMatchersSpec::DummyPolicy)
+
+        expect(matcher.failure_message).to eq %q{RspecMatchersSpec::DummyPolicy does not permit 'read' on "a record" to "a user".}
+        expect(matcher.negative_failure_message).to eq %q{RspecMatchersSpec::DummyPolicy does not forbid 'read' on "a record" to "a user".}
+      end
+
       it 'returns false when permission is not granted' do
         matcher = permit(:write).on(record).to(user)
         expect(matcher.matches?(RspecMatchersSpec::DummyPolicy)).to be_falsy
@@ -61,6 +69,14 @@ describe 'PolicyMatchers' do
       it 'returns true when permission is not granted' do
         matcher = forbid(:write).on(record).to(user)
         expect(matcher.matches?(RspecMatchersSpec::DummyPolicy)).to be_truthy
+      end
+
+      it 'sets error messages' do
+        matcher = forbid(:read).on(record).to(user)
+        matcher.matches?(RspecMatchersSpec::DummyPolicy)
+
+        expect(matcher.failure_message).to eq %q{RspecMatchersSpec::DummyPolicy does not forbid 'read' on "a record" to "a user".}
+        expect(matcher.negative_failure_message).to eq %q{RspecMatchersSpec::DummyPolicy does permit 'read' on "a record" to "a user".}
       end
     end
   end

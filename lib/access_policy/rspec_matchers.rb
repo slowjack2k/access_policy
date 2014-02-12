@@ -24,11 +24,11 @@ module AccessPolicy
       end
 
       def failure_message
-        "#{policy_class} #{failure_message_part} #{permission} #{object_as_text}#{user_as_text}."
+        "#{policy_class} #{failure_message_part} '#{permission}'#{object_as_text}#{user_as_text}."
       end
 
       def negative_failure_message
-        "#{policy_class} #{negative_failure_message_part} #{permission}#{object_as_text}#{user_as_text}."
+        "#{policy_class} #{negative_failure_message_part} '#{permission}'#{object_as_text}#{user_as_text}."
       end
 
 
@@ -66,7 +66,7 @@ module AccessPolicy
       end
 
       def  user_as_text
-        self.user.nil? ? '' : " for #{self.inspect}"
+        self.user.nil? ? '' : " to #{self.user.inspect}"
       end
 
     end
