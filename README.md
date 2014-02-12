@@ -43,11 +43,6 @@ ToGuardPolicy = Struct.new(:current_user_or_role, :object_of_kind_to_guard) do
     end
   end
 
-  # optional
-  def error_message
-    @error_message
-  end
-
 end
 
 object_to_guard = ToGuard.new
