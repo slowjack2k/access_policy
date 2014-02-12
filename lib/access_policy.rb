@@ -44,7 +44,7 @@ module AccessPolicy
   module ClassMethods
 
     def policy_guarded_method(action_name, &block)
-      unsafe_action_name = :"#{action_name}_unsafe"
+      unsafe_action_name = unsafe_action_name(action_name)
 
       define_method action_name do |*args|
         _authorize "#{action_name}?"
@@ -52,6 +52,10 @@ module AccessPolicy
       end
 
       define_method unsafe_action_name, block
+    end
+
+    def unsafe_action_name(action_name)
+      :"#{action_name}_unsafe"
     end
 
   end

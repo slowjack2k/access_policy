@@ -54,6 +54,16 @@ module AccessPolicy
       it 'raises an error when class to guard has no name' do
         expect{AccessPolicy::PolicyEnforcer.new(current_user, Class.new.new, action, error_policy)}.to raise_error
       end
+
+      it 'raises no error when class to guard has no name but an policy class is defined' do
+        some_class = Class.new do
+          def self.policy_class
+            Class.new
+          end
+        end
+
+        expect { AccessPolicy::PolicyEnforcer.new(current_user, some_class.new, action, error_policy) }.not_to raise_error
+      end
     end
 
 
