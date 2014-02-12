@@ -32,8 +32,20 @@ end
 
 ToGuardPolicy = Struct.new(:current_user_or_role, :object_of_kind_to_guard) do
 
+  attr_accessor :error_message # optional
+
   def method_to_guard?
-    current_user_or_role.is_allowed?
+    if current_user_or_role.is_allowed?
+      true
+    else
+      self.error_message = "you'r not allowed to do this" # optional
+      false
+    end
+  end
+
+  # optional
+  def error_message
+    @error_message
   end
 
 end
