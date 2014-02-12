@@ -6,6 +6,15 @@ require 'access_policy/policy_enforcer'
 
 module AccessPolicy
 
+  class NotDefinedError < StandardError
+  end
+
+  class NotAuthorizedError < StandardError
+  end
+
+  class AuthorizeNotCalledError < StandardError
+  end
+
   def self.included(base)
     base.extend ClassMethods
   end

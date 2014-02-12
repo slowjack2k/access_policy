@@ -14,7 +14,7 @@ module AccessPolicy
 
     def authorize(object_to_guard, action_to_guard, error_policy: default_error_policy)
       PolicyEnforcer.new(current_user_or_role_for_policy, object_to_guard, action_to_guard).authorize(error_policy) do
-        self.policy_authorized=true
+        self.policy_authorize_called=true
       end
     end
 
@@ -23,12 +23,12 @@ module AccessPolicy
     end
 
     def with_user_or_role(new_current_user_or_role_for_policy, error_policy = default_error_policy)
-      self.policy_authorized = false
+      self.policy_authorize_called = false
 
       switched_user_or_role(new_current_user_or_role_for_policy) do
         begin
           yield if block_given?
-          raise(PolicyEnforcer::NotAuthorizedError, "#{new_current_user_or_role_for_policy}") unless policy_authorized?
+          raise(AccessPolicy::AuthorizeNotCalledError, "#{new_current_user_or_role_for_policy}") unless policy_authorize_called?
         rescue => e
           error_policy.call(e)
         end
@@ -43,18 +43,18 @@ module AccessPolicy
       scope['current_user_or_role_for_policy']
     end
 
-    def policy_authorized=(new_value)
-      scope['policy_authorized'] = new_value
+    def policy_authorize_called=(new_value)
+      scope['policy_authorize_called'] = new_value
     end
 
-    def policy_authorized?
-      !!policy_authorized
+    def policy_authorize_called?
+      !!policy_authorize_called
     end
 
     protected
 
-    def policy_authorized
-      scope['policy_authorized']
+    def policy_authorize_called
+      scope['policy_authorize_called']
     end
 
     def scope

@@ -1,9 +1,5 @@
 module AccessPolicy
   class PolicyEnforcer
-    class NotDefinedError < StandardError;
-    end
-    class NotAuthorizedError < StandardError;
-    end
 
     attr_accessor :current_user_or_role, :object_or_class, :query, :default_error_policy
 
@@ -18,7 +14,10 @@ module AccessPolicy
     end
 
     def authorize(error_policy=default_error_policy)
-      raise(PolicyEnforcer::NotAuthorizedError, "not allowed to #{query} this #{object_or_class}" ) unless _guard_action()
+      unless _guard_action()
+        error_message = policy.respond_to?(:error_message) ? policy.error_message : "not allowed to #{query} this #{object_or_class}"
+        raise(AccessPolicy::NotAuthorizedError, error_message)
+      end
       yield true if block_given?
       true
     rescue
@@ -26,7 +25,7 @@ module AccessPolicy
     end
 
     def policy(error_policy=default_error_policy)
-      specific_policy_for_class.new(current_user_or_role, object_or_class)
+      @policy||= specific_policy_for_class.new(current_user_or_role, object_or_class)
     rescue
       error_policy.call(object_or_class)
     end

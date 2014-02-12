@@ -43,7 +43,7 @@ describe AccessPolicy do
         subject.with_user_or_role(falsy_user) do
           subject.call
         end
-      }.to  raise_error AccessPolicy::PolicyEnforcer::NotAuthorizedError
+      }.to  raise_error AccessPolicy::NotAuthorizedError
     end
 
     it 'grands access to guarded methods when the user has the right' do

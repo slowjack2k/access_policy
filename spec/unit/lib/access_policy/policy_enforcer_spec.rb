@@ -13,6 +13,10 @@ module PolicyEnforcerSpec
     def not_allowed_call?
       false
     end
+
+    def error_message
+      "some thing went wrong"
+    end
   end
 
   module A
@@ -87,12 +91,12 @@ module AccessPolicy
       it 'raises Policy::NotDefinedError when no policy class found' do
         B = Object
         subject.object_or_class = B
-        expect { subject.policy }.to raise_error PolicyEnforcer::NotDefinedError
+        expect { subject.policy }.to raise_error AccessPolicy::NotDefinedError
       end
 
       it 'raises Policy::NotDefinedError when class.name is empty' do
         subject.object_or_class = Class.new
-        expect { subject.policy }.to raise_error PolicyEnforcer::NotDefinedError
+        expect { subject.policy }.to raise_error AccessPolicy::NotDefinedError
       end
     end
 
@@ -106,9 +110,14 @@ module AccessPolicy
         expect{subject.authorize}.to raise_error
       end
 
+      it 'sets custom error messages on the error' do
+        subject.query = "not_allowed_call"
+        expect{subject.authorize}.to raise_error(AccessPolicy::NotAuthorizedError, "some thing went wrong")
+      end
+
       it 'raises an exception when no method is defined' do
         subject.query = "call2"
-        expect { subject.authorize }.to raise_error PolicyEnforcer::NotDefinedError
+        expect { subject.authorize }.to raise_error AccessPolicy::NotDefinedError
       end
 
       it 'uses a given error handler' do

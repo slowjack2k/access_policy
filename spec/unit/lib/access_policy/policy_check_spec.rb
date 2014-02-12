@@ -17,7 +17,7 @@ module AccessPolicy
     subject {
       AccessPolicy::PolicyCheck.new.tap { |p|
         p.current_user_or_role_for_policy=nil
-        p.policy_authorized = true
+        p.policy_authorize_called = true
       }
 
     }
@@ -54,7 +54,7 @@ module AccessPolicy
     describe '.with_user_or_role' do
       it 'sets the current user' do
         subject.with_user_or_role(current_user) do
-          subject.policy_authorized = true
+          subject.policy_authorize_called = true
           expect(subject.current_user_or_role_for_policy).to eq current_user
         end
       end
@@ -63,14 +63,14 @@ module AccessPolicy
         subject.current_user_or_role_for_policy = 'other user'
 
         subject.with_user_or_role(current_user) do
-          subject.policy_authorized = true
+          subject.policy_authorize_called = true
         end
 
         expect(subject.current_user_or_role_for_policy).to eq 'other user'
       end
 
-      it 'raises PolicyEnforcer::NotAuthorizedError when authorize is not called' do
-        expect { subject.with_user_or_role(current_user) }.to raise_error PolicyEnforcer::NotAuthorizedError
+      it 'raises PolicyEnforcer::AuthorizeNotCalledError when authorize is not called' do
+        expect { subject.with_user_or_role(current_user) }.to raise_error AccessPolicy::AuthorizeNotCalledError
       end
 
       it 'does not raise PolicyEnforcer::NotAuthorizedError when authorize is called' do
