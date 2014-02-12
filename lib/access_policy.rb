@@ -43,11 +43,11 @@ module AccessPolicy
 
   module ClassMethods
 
-    def policy_guarded_method(action_name, &block)
+    def policy_guarded_method(action_name, query="#{action_name}?" ,&block)
       unsafe_action_name = unsafe_action_name(action_name)
 
       define_method action_name do |*args|
-        _authorize "#{action_name}?"
+        _authorize query
         self.send(unsafe_action_name, *args)
       end
 

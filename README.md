@@ -76,6 +76,10 @@ Or
      # do some stuff
    end
 
+    policy_guarded_method 'publish', 'create?' do
+      # do some stuff
+    end
+
  end
 
  ToGuardPolicy = Struct.new(:current_user_or_role, :object_of_kind_to_guard) do

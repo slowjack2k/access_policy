@@ -5,6 +5,10 @@ module AccessPolicySpec
     def call?
       current_user && current_user.allowed?
     end
+
+    def query?
+      raise StandardError, 'query? called'
+    end
   end
 
 
@@ -12,6 +16,10 @@ module AccessPolicySpec
     include AccessPolicy
 
     policy_guarded_method 'call' do
+      :return_value
+    end
+
+    policy_guarded_method 'other_method_name', 'query?' do
       :return_value
     end
 
@@ -62,6 +70,12 @@ describe AccessPolicy do
       expect {
         subject.call_unsafe
       }.not_to  raise_error
+    end
+
+    it 'uses a different name for query when wanted' do
+      expect {
+        subject.other_method_name
+      }.to  raise_error(StandardError, 'query? called')
     end
   end
 
