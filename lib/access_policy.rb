@@ -6,13 +6,21 @@ require 'access_policy/policy_enforcer'
 
 module AccessPolicy
 
-  class NotDefinedError < StandardError
+  class NestedStandardError < StandardError
+    attr_reader :original
+    def initialize(msg, original=$!)
+      super(msg)
+      @original = original
+    end
   end
 
-  class NotAuthorizedError < StandardError
+  class NotDefinedError < NestedStandardError
   end
 
-  class AuthorizeNotCalledError < StandardError
+  class NotAuthorizedError < NestedStandardError
+  end
+
+  class AuthorizeNotCalledError < NestedStandardError
   end
 
   def self.included(base)
